@@ -18,7 +18,10 @@ robots.txt      / sitemap.xml
 
 ## 1. Run it locally
 
-No install needed. From the project folder:
+Double-click `index.html`. All asset paths are relative, so it works straight off your
+drive with no server.
+
+If you'd rather serve it (closer to how Vercel will run it):
 
 ```bash
 python3 -m http.server 8000
