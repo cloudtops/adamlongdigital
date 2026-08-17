@@ -45,12 +45,13 @@ nav a{font-size:1rem;transition:color .4s var(--ease)}
 .hero{min-height:100svh;display:flex;flex-direction:column;justify-content:center;padding-top:8rem;padding-bottom:3rem;position:relative}
 .hero .eyebrow{margin-bottom:2.5rem}
 .mega{font-size:clamp(2.6rem,9vw,8.5rem);line-height:.86;letter-spacing:-.035em;max-width:100%}
-.mega .ln{display:block;overflow:hidden}
-.mega .ln i{display:block;font-style:normal;transform:translateY(105%);transition:transform 1.05s var(--ease)}
+.mega .ln{display:block;overflow:hidden;padding-bottom:.28em;margin-bottom:-.28em}
+.mega .ln i{display:block;white-space:nowrap;font-style:normal;transform:translateY(105%);transition:transform 1.05s var(--ease)}
 .mega .ln i.it{font-style:italic;color:var(--clay)}
 .loaded .mega .ln i{transform:translateY(0)}
 .loaded .mega .ln:nth-child(2) i{transition-delay:.09s}
 .loaded .mega .ln:nth-child(3) i{transition-delay:.18s}
+.loaded .mega .ln:nth-child(4) i{transition-delay:.27s}
 .hero-foot{display:grid;grid-template-columns:1fr auto;gap:2.5rem;align-items:end;margin-top:clamp(2.5rem,6vw,5rem)}
 .hero-foot p{font-size:clamp(1.05rem,1.35vw,1.25rem);max-width:33em}
 .hero-cta{display:flex;gap:1rem;flex-wrap:wrap}

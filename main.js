@@ -28,7 +28,10 @@ function fitMega(){
     widest=Math.max(widest,r.getBoundingClientRect().width);
   });
   if(!widest)return;
-  const size=Math.max(34,Math.min(190,(avail*0.995)/widest*BASE));
+  const lines=mega.querySelectorAll('.ln').length||1;
+  const byWidth=(avail*0.995)/widest*BASE;
+  const byHeight=(innerHeight*0.54)/(lines*0.9);   // keep the headline inside the fold
+  const size=Math.max(34,Math.min(190,byWidth,byHeight));
   mega.style.fontSize=size+'px';
 }
 fitMega();
