@@ -18,7 +18,7 @@ the previous `index.html`, `styles.css`, `main.js`, and the unused `assets/out-*
 
 ## If the domain changes
 
-Five places hardcode `https://adam-long-digital.vercel.app`:
+Five places hardcode `https://adamlongdigital.vercel.app`:
 
 - `index.html` — `<link rel="canonical">`, `og:url`, `og:image`, `twitter:image`, and the JSON-LD block
 - `robots.txt` — the `Sitemap:` line
