@@ -50,9 +50,9 @@ const POSTS=[
     meta:'Instagram carousel · 1080 × 1350',
     ratio:'4/5',
     slides:[
-      {src:'assets/post-bb-1.jpg',alt:'Carousel cover asking what a move is actually worth'},
-      {src:'assets/post-bb-2.jpg',alt:'Slide showing sales volume nearly doubled, up 95 percent'},
-      {src:'assets/post-bb-3.jpg',alt:'Slide showing 21 agents recruited in Nashville'}
+      {src:'assets/post-bb-1.jpg?v=2',alt:'Carousel cover asking what a move is actually worth'},
+      {src:'assets/post-bb-2.jpg?v=2',alt:'Slide showing sales volume nearly doubled, up 95 percent'},
+      {src:'assets/post-bb-3.jpg?v=2',alt:'Slide showing 21 agents recruited in Nashville'}
     ]
   },
   {
@@ -64,12 +64,12 @@ const POSTS=[
     meta:'Instagram carousel · 1080 × 1080',
     ratio:'1/1',
     slides:[
-      {src:'assets/post-wc-1.jpg',alt:'Waterford Court carousel cover'},
-      {src:'assets/post-wc-2.jpg',alt:'Waterford Court feature slide'},
-      {src:'assets/post-wc-3.jpg',alt:'Waterford Court feature slide'},
-      {src:'assets/post-wc-4.jpg',alt:'Waterford Court feature slide'},
-      {src:'assets/post-wc-5.jpg',alt:'The Terrace, a covered patio slide'},
-      {src:'assets/post-wc-7.jpg',alt:'Waterford Court particulars slide'}
+      {src:'assets/post-wc-1.jpg?v=2',alt:'Waterford Court carousel cover'},
+      {src:'assets/post-wc-2.jpg?v=2',alt:'Waterford Court feature slide'},
+      {src:'assets/post-wc-3.jpg?v=2',alt:'Waterford Court feature slide'},
+      {src:'assets/post-wc-4.jpg?v=2',alt:'Waterford Court feature slide'},
+      {src:'assets/post-wc-5.jpg?v=2',alt:'The Terrace, a covered patio slide'},
+      {src:'assets/post-wc-7.jpg?v=2',alt:'Waterford Court particulars slide'}
     ]
   },
   {
@@ -81,9 +81,9 @@ const POSTS=[
     meta:'Instagram carousel · 1080 × 1080',
     ratio:'1/1',
     slides:[
-      {src:'assets/post-hope-1.jpg',alt:'Hope Landing carousel cover'},
-      {src:'assets/post-hope-2.jpg',alt:'Hope Landing estate slide'},
-      {src:'assets/post-hope-3.jpg',alt:'Hope Landing closing slide with contact details'}
+      {src:'assets/post-hope-1.jpg?v=2',alt:'Hope Landing carousel cover'},
+      {src:'assets/post-hope-2.jpg?v=2',alt:'Hope Landing estate slide'},
+      {src:'assets/post-hope-3.jpg?v=2',alt:'Hope Landing closing slide with contact details'}
     ]
   },
   {
@@ -95,9 +95,9 @@ const POSTS=[
     meta:'Feed graphics · 1080 × 1350',
     ratio:'4/5',
     slides:[
-      {src:'assets/post-growth-1.jpg',alt:'Agent growth curve graphic'},
-      {src:'assets/post-growth-2.jpg',alt:'Second agent growth curve graphic'},
-      {src:'assets/post-growth-3.jpg',alt:'Affiliation effect roster card'}
+      {src:'assets/post-growth-1.jpg?v=2',alt:'Agent growth curve graphic'},
+      {src:'assets/post-growth-2.jpg?v=2',alt:'Second agent growth curve graphic'},
+      {src:'assets/post-growth-3.jpg?v=2',alt:'Affiliation effect roster card'}
     ]
   }
 ];
