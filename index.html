@@ -86,10 +86,23 @@
   <span class="scroll-hint">Scroll</span>
 </section>
 
-<div class="band">
-  <img src="assets/band-fox-island.jpg?v=2" alt="Hope Landing concept rendering at golden hour, Fox Island, Washington" data-parallax>
+<div class="band" id="band">
+  <video id="bandVideo" poster="assets/band-poster.jpg?v=2" muted loop playsinline preload="none"
+         data-webm="assets/band-hope-landing.webm?v=2" data-mp4="assets/band-hope-landing.mp4?v=2"
+         aria-label="Hope Landing film, Fox Island, Washington" data-parallax></video>
   <span class="cap">Hope Landing &middot; Fox Island, Washington</span>
 </div>
+<div class="clients">
+  <div class="wrap">
+    <span class="eyebrow">Worked with</span>
+    <div class="mark-row">
+      <img class="mark" src="assets/logo-rsir.svg?v=2" alt="Realogics Sotheby's International Realty">
+      <span class="mark-type">Beyond Brokers<i>Consulting</i></span>
+      <span class="mark-note">and independent agents and small businesses across the Eastside and Puget Sound.</span>
+    </div>
+  </div>
+</div>
+
 
 <div class="marquee" aria-hidden="true">
   <div class="track">
@@ -107,7 +120,7 @@
   <article class="case rv">
     <span class="idx">01</span>
     <div class="case-inner">
-      <div class="frame square"><img src="assets/case-beyond-brokers.jpg?v=2" alt="Beyond Brokers referral network map of the greater Nashville area"></div>
+      <div class="frame square rv-img"><img src="assets/case-beyond-brokers.jpg?v=2" alt="Beyond Brokers referral network map of the greater Nashville area"></div>
       <div class="case-body">
         <span class="eyebrow clay">Ongoing &middot; Social, email, and brand</span>
         <h3>Beyond Brokers Consulting</h3>
@@ -122,7 +135,7 @@
   <article class="case rv">
     <span class="idx">02</span>
     <div class="case-inner">
-      <div class="frame square"><img src="assets/case-hope-landing.jpg?v=2" alt="Hope Landing listing carousel cover slide"></div>
+      <div class="frame square rv-img"><img src="assets/case-hope-landing.jpg?v=2" alt="Hope Landing listing carousel cover slide"></div>
       <div class="case-body">
         <span class="eyebrow clay">Site, video, and social</span>
         <h3>Hope Landing</h3>
@@ -137,7 +150,7 @@
   <article class="case rv">
     <span class="idx">03</span>
     <div class="case-inner">
-      <div class="frame square"><img src="assets/case-waterford.jpg?v=2" alt="Waterford Court listing carousel cover, Kirkland, Washington"></div>
+      <div class="frame square rv-img"><img src="assets/case-waterford.jpg?v=2" alt="Waterford Court listing carousel cover, Kirkland, Washington"></div>
       <div class="case-body">
         <span class="eyebrow clay">Print and social</span>
         <h3>Waterford Court</h3>
@@ -203,15 +216,15 @@
       <a class="btn" href="#inquire" style="margin-top:2.5rem"><span>Let’s work together</span></a>
     </div>
     <div class="rv">
-      <div class="about-media"><img src="assets/case-aerial.jpg?v=2" alt="Aerial view of a Puget Sound property"></div>
+      <div class="about-media rv-img"><img src="assets/case-aerial.jpg?v=2" alt="Aerial view of a Puget Sound property"></div>
       <span class="cap">Puget Sound, where most of the work has been made.</span>
     </div>
   </div>
-  <div class="stats rv">
-    <div><strong>5-10</strong><small>Days from brief to live</small></div>
-    <div><strong>2</strong><small>Revision rounds included</small></div>
-    <div><strong>100%</strong><small>Custom, no templates</small></div>
-    <div><strong>1</strong><small>Person you actually talk to</small></div>
+  <div class="stats rv" id="stats">
+    <div><strong data-count="5-10">5-10</strong><small>Days from brief to live</small></div>
+    <div><strong data-count="2">2</strong><small>Revision rounds included</small></div>
+    <div><strong data-count="100%">100%</strong><small>Custom, no templates</small></div>
+    <div><strong data-count="1">1</strong><small>Person you actually talk to</small></div>
   </div>
 </section>
 

@@ -257,3 +257,75 @@ if (form) {
     }
   });
 }
+
+// ── band video: only load it when it is worth the bytes ──
+const bandVideo = document.getElementById('bandVideo');
+if (bandVideo) {
+  const conn = navigator.connection || {};
+  const heavyOK = innerWidth > 700
+    && !conn.saveData
+    && !/2g|slow-2g/.test(conn.effectiveType || '')
+    && !matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (heavyOK) {
+    const load = () => {
+      const add = (src, type) => {
+        if (!src) return;
+        const s = document.createElement('source');
+        s.src = src; s.type = type;
+        bandVideo.appendChild(s);
+      };
+      add(bandVideo.dataset.webm, 'video/webm');   // smaller, and plays where h264 is absent
+      add(bandVideo.dataset.mp4, 'video/mp4');     // Safari and everything else
+      bandVideo.load();
+      bandVideo.play().catch(() => {});            // poster stays if autoplay is blocked
+    };
+    if ('IntersectionObserver' in window) {
+      const vo = new IntersectionObserver((es) => {
+        es.forEach(e => {
+          if (e.isIntersecting) { load(); vo.disconnect(); }
+        });
+      }, { rootMargin: '400px' });
+      vo.observe(bandVideo);
+    } else load();
+    // pause when off screen so it is not burning cycles
+    const po = new IntersectionObserver((es) => {
+      es.forEach(e => e.isIntersecting ? bandVideo.play().catch(()=>{}) : bandVideo.pause());
+    }, { threshold: 0.05 });
+    po.observe(bandVideo);
+  }
+}
+
+// ── image reveals ──
+const imgIO = new IntersectionObserver((es) => {
+  es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); imgIO.unobserve(e.target); } });
+}, { rootMargin: '0px 0px -8% 0px', threshold: 0.1 });
+document.querySelectorAll('.rv-img').forEach(el => imgIO.observe(el));
+
+// ── stat counters ──
+const statsEl = document.getElementById('stats');
+if (statsEl && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+  const run = (el) => {
+    const raw = el.dataset.count || el.textContent;
+    const range = raw.match(/^(\d+)-(\d+)$/);
+    const plain = raw.match(/^(\d+)(\D*)$/);
+    const target = range ? +range[2] : plain ? +plain[1] : 0;
+    if (!target || (!range && target <= 2)) return;      // "1" and "2" do not need a runway
+    const suffix = range ? '' : plain[2];
+    const dur = 1100, t0 = performance.now();
+    const draw = (v) => { el.textContent = range ? `${range[1]}-${v}` : `${v}${suffix}`; };
+    const tick = (now) => {
+      const p = Math.min(1, (now - t0) / dur);
+      draw(Math.round(target * (1 - Math.pow(1 - p, 3))));
+      if (p < 1) requestAnimationFrame(tick); else el.textContent = raw;
+    };
+    draw(0);
+    requestAnimationFrame(tick);
+  };
+
+  const sIO = new IntersectionObserver((es) => {
+    es.forEach(e => {
+      if (e.isIntersecting) { e.target.querySelectorAll('[data-count]').forEach(run); sIO.disconnect(); }
+    });
+  }, { threshold: 0.35 });
+  sIO.observe(statsEl);
+}
