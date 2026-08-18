@@ -197,3 +197,63 @@ addEventListener('scroll',()=>{
     tick=false;
   });
 },{passive:true});
+
+// ── inquiry form ────────────────────────────────
+// Posts to Web3Forms. If the access key has not been set, or the request fails,
+// it falls back to opening a prefilled email so an inquiry is never silently lost.
+const form = document.getElementById('inquiryForm');
+if (form) {
+  const status = document.getElementById('formStatus');
+  const submitBtn = form.querySelector('button[type=submit]');
+  const MAIL = 'adamlongdigital@gmail.com';
+
+  const say = (msg, kind) => { status.textContent = msg; status.className = 'form-status ' + (kind || ''); };
+
+  const mailtoFallback = (data) => {
+    const body = [
+      `Name: ${data.name || ''}`,
+      `Email: ${data.email || ''}`,
+      `Phone: ${data.phone || ''}`,
+      `Company: ${data.company || ''}`,
+      `Needs: ${data.service || ''}`,
+      '',
+      data.details || ''
+    ].join('\n');
+    window.location.href = `mailto:${MAIL}?subject=${encodeURIComponent('Project inquiry from ' + (data.name || 'the website'))}&body=${encodeURIComponent(body)}`;
+  };
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const data = Object.fromEntries(new FormData(form).entries());
+    if (data.botcheck) return;                       // honeypot tripped, silently drop
+
+    const key = form.querySelector('[name=access_key]').value;
+    if (!key || key.startsWith('PASTE-')) {          // key not set yet
+      say('Opening your email app so nothing gets lost.', 'warn');
+      mailtoFallback(data);
+      return;
+    }
+
+    submitBtn.disabled = true;
+    say('Sending…');
+    try {
+      const res = await fetch(form.action, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify(data)
+      });
+      const out = await res.json();
+      if (out.success) {
+        form.reset();
+        say('Got it. I’ll get back to you today.', 'ok');
+      } else {
+        throw new Error(out.message || 'submit failed');
+      }
+    } catch (err) {
+      say('That didn’t go through. Opening your email app instead.', 'warn');
+      mailtoFallback(data);
+    } finally {
+      submitBtn.disabled = false;
+    }
+  });
+}

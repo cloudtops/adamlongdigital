@@ -232,3 +232,8 @@ footer nav a{color:#8B8377;font-size:.96rem}
 }
 @media (max-width:560px){form,.steps,.stats{grid-template-columns:1fr}.hero{min-height:92svh}}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition-duration:.01ms!important}.rv{opacity:1;transform:none}.mega .ln i{transform:none}}
+
+.form-status{grid-column:1/-1;margin-top:-.6rem;font-size:1rem;min-height:1.4em;color:#9E968A}
+.form-status.ok{color:var(--paper)}
+.form-status.warn{color:var(--clay)}
+button[type=submit][disabled]{opacity:.5;cursor:default}

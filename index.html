@@ -259,8 +259,14 @@
       <div class="rv">
         <p>Tell me what you're selling, who you want to reach, and when you need it live. I answer every message myself, usually the same day. Talk soon!</p>
         <p>Prefer email? <a class="mail link-sweep" href="mailto:adamlongdigital@gmail.com">adamlongdigital@gmail.com</a></p>
+        <a class="btn on-dark" style="margin-top:1.6rem" href="mailto:adamlongdigital@gmail.com?subject=Project%20inquiry"><span>Email me directly</span></a>
       </div>
-      <form class="rv" action="mailto:adamlongdigital@gmail.com" method="post" enctype="text/plain">
+      <form class="rv" id="inquiryForm" action="https://api.web3forms.com/submit" method="POST">
+        <!-- PASTE YOUR WEB3FORMS ACCESS KEY BETWEEN THE QUOTES BELOW -->
+        <input type="hidden" name="access_key" value="PASTE-YOUR-ACCESS-KEY-HERE">
+        <input type="hidden" name="subject" value="New inquiry from adamlongdigital.com">
+        <input type="hidden" name="from_name" value="Adam Long Digital site">
+        <input type="checkbox" name="botcheck" tabindex="-1" autocomplete="off" style="display:none" aria-hidden="true">
         <div class="field"><label for="name">Name</label><input id="name" name="name" type="text" required></div>
         <div class="field"><label for="email">Email</label><input id="email" name="email" type="email" required></div>
         <div class="field"><label for="phone">Phone <i>(optional)</i></label><input id="phone" name="phone" type="tel"></div>
@@ -271,6 +277,7 @@
         <div class="field full"><label for="details">The work, and the timeline</label>
           <textarea id="details" name="details" placeholder="What you're selling, who you're trying to reach, and when you need it live."></textarea></div>
         <button type="submit" class="btn on-dark"><span>Send inquiry</span></button>
+        <p class="form-status" id="formStatus" role="status" aria-live="polite"></p>
       </form>
     </div>
   </div>
