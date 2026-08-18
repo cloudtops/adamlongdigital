@@ -274,3 +274,54 @@ button[type=submit][disabled]{opacity:.5;cursor:default}
 
 .mark-note{font-size:1rem;color:var(--muted);max-width:22em;line-height:1.45;margin-left:auto;text-align:right}
 @media (max-width:700px){.mark-note{margin-left:0;text-align:left;font-size:.95rem}}
+
+/* ── hero atmosphere ────────────────────────── */
+.hero{isolation:isolate}
+.hero > :not(.atmos){position:relative;z-index:1}
+.atmos{position:absolute;top:0;bottom:0;left:50%;width:100vw;margin-left:-50vw;overflow:hidden;pointer-events:none;z-index:0}
+
+/* two slow washes of warm colour, drifting past each other */
+.wash{position:absolute;border-radius:50%;filter:blur(90px);will-change:transform}
+.wash-a{
+  width:58vw;height:58vw;left:-10vw;top:-18vw;
+  background:radial-gradient(circle at 50% 50%, rgba(154,107,79,.16), rgba(154,107,79,0) 68%);
+  animation:driftA 46s ease-in-out infinite alternate;
+}
+.wash-b{
+  width:52vw;height:52vw;right:-14vw;bottom:-20vw;
+  background:radial-gradient(circle at 50% 50%, rgba(0,35,73,.09), rgba(0,35,73,0) 66%);
+  animation:driftB 61s ease-in-out infinite alternate;
+}
+@keyframes driftA{
+  0%{transform:translate3d(0,0,0) scale(1)}
+  50%{transform:translate3d(6vw,4vw,0) scale(1.12)}
+  100%{transform:translate3d(-3vw,7vw,0) scale(1.04)}
+}
+@keyframes driftB{
+  0%{transform:translate3d(0,0,0) scale(1.05)}
+  50%{transform:translate3d(-7vw,-5vw,0) scale(1)}
+  100%{transform:translate3d(4vw,-8vw,0) scale(1.1)}
+}
+
+/* hairline column grid, aligned to the content measure */
+.hair-grid{
+  position:absolute;inset:0;margin:0 auto;max-width:var(--max);
+  padding-left:var(--pad);padding-right:var(--pad);
+  display:grid;grid-template-columns:repeat(5,1fr);
+}
+.hair-grid i{border-left:1px solid rgba(28,26,23,.045);height:100%}
+.hair-grid i:first-child{border-left:0}
+
+/* paper grain */
+.grain{
+  position:absolute;inset:-50%;opacity:.38;mix-blend-mode:multiply;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='.13'/%3E%3C/svg%3E");
+  background-size:140px 140px;
+}
+@media (max-width:700px){
+  .wash{filter:blur(60px)}
+  .hair-grid{grid-template-columns:repeat(3,1fr)}
+}
+@media (prefers-reduced-motion:reduce){
+  .wash{animation:none}
+}

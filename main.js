@@ -274,8 +274,8 @@ if (bandVideo) {
         s.src = src; s.type = type;
         bandVideo.appendChild(s);
       };
-      add(bandVideo.dataset.webm, 'video/webm');   // smaller, and plays where h264 is absent
-      add(bandVideo.dataset.mp4, 'video/mp4');     // Safari and everything else
+      add(bandVideo.dataset.mp4, 'video/mp4');     // h264 plays everywhere, and is the smaller file here
+      add(bandVideo.dataset.webm, 'video/webm');   // fallback for builds without h264
       bandVideo.load();
       bandVideo.play().catch(() => {});            // poster stays if autoplay is blocked
     };
