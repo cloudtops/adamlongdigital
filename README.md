@@ -1,77 +1,79 @@
-# Adam Long Digital
+# adamlongdigital.com
 
-Marketing studio site. Static HTML, CSS, and JS. No build step, no dependencies.
+Static marketing site for Adam Long Digital. No build step, no framework, no
+dependencies. Deployed on Vercel from this repo.
 
-## Deploying
-
-Drop everything in this folder at the root of the repo and push. Vercel serves it as-is.
-
-    index.html
-    styles.css
-    main.js
-    assets/
-    favicon.svg  favicon-32.png  favicon-16.png  apple-touch-icon.png  icon-512.png
-    site.webmanifest  robots.txt  sitemap.xml  vercel.json
-
-If you keep the old repo files, delete these first so nothing stale gets served:
-the previous `index.html`, `styles.css`, `main.js`, and the unused `assets/out-*.jpg` set.
-
-## If the domain changes
-
-Five places hardcode `https://adamlongdigital.vercel.app`:
-
-- `index.html` — `<link rel="canonical">`, `og:url`, `og:image`, `twitter:image`, and the JSON-LD block
-- `robots.txt` — the `Sitemap:` line
-- `sitemap.xml` — the `<loc>` line
-
-Find and replace the domain across those three files.
+Live: https://www.adamlongdigital.com
 
 ## Structure
 
-| Section | What it is |
-| --- | --- |
-| Hero | Headline auto-fits its container via `fitMega()` in `main.js` |
-| Band | Full-bleed Hope Landing rendering, parallax on scroll |
-| Marquee | Scrolling services list |
-| Work | Four case studies plus a two-up row for Houghton and Holly Hall |
-| Carousel | Instagram-style post viewer, four posts, swipe / arrows / dots |
-| Studio | About plus the stats row |
-| Services | Four numbered services |
-| Process | Four steps, clay background |
-| Inquire | Contact form |
+```
+index.html      the whole page
+styles.css      the design system
+main.js         three behaviours: work accordion, output viewer, inquiry form
+assets/         case images and carousel slides
+vercel.json     cache headers
+```
 
-## The carousel
+Everything else is favicons, the manifest, robots.txt and sitemap.xml.
 
-Post content lives in the `POSTS` array at the top of the carousel block in `main.js`.
-To add a post, push an object with `tab`, `client`, `title`, `body`, `tag`, `meta`,
-`ratio` (`'1/1'` or `'4/5'`), and a `slides` array of `{src, alt}`. The viewer reads
-`ratio` to reshape the frame, so slides inside one post should share an aspect ratio.
+## Design
 
-## Known gaps
+One typeface, IBM Plex Mono, loaded from Google Fonts. Hierarchy comes from
+rules, letter case and position rather than size: the largest type on the page
+is 17px. The palette is defined as custom properties at the top of `styles.css`.
 
-- **The contact form posts to `mailto:`.** That opens the visitor's mail client rather
-  than sending. Wire it to Formspree, Vercel Forms, or a serverless function before
-  you rely on it for leads.
-- **Houghton and Holly Hall have no images.** They sit in the compact row under the
-  main case studies until you add screenshots.
-- **Beyond Brokers is case 01** and its assets appear throughout the page and the
-  carousel. Clear that with Val before this goes public.
-- **The OG image type is set in Lora**, not Instrument Serif, because the render
-  environment did not have the brand font. Re-export `assets/og-hero.jpg` if you want
-  it exact.
+The accent colour `--sig` is only ever used on live things: section numbers, an
+open row, a working link, a focused form field, the status dot. If it is being
+used decoratively, that is a bug.
 
-## Fonts
+Deliberately absent: scroll-reveal animations, gradients, grain, shadows,
+rounded corners, pill tags. The page has no decorative elements. Adding one is
+a design decision, not a tweak.
 
-Instrument Serif from Google Fonts, one family throughout, with
-`Iowan Old Style, Georgia, serif` as the fallback stack.
+## Editing the work index
 
-## Palette
+Each project is one `<article class="row">` inside `#workIndex`. The row header
+holds the number, title, kind and year. The body holds a `figure.plate` and a
+`dl.specs`. Copy an existing row and renumber. Only one row carries `is-open`
+plus `aria-expanded="true"`, and it should be the first.
 
-    --paper      #F4F1EC   page background
-    --paper-alt  #EBE5DA   alternate band
-    --ink        #14120F   dark sections and text
-    --body       #46423B   body copy
-    --muted      #7C7469   secondary text
-    --rule       #C9C3B8   hairlines
-    --clay       #9A6B4F   accent
-    --navy       #002349   carousel slide backdrop
+At 1180px and wider the expanded row becomes three columns: label gutter, image,
+writeup. Below that it stacks.
+
+## Editing the output viewer
+
+The carousels are data, not markup. Edit the `POSTS` array at the top of the
+viewer section in `main.js`. Each entry needs `tab`, `client`, `title`, `body`,
+`tag`, `meta` and a `slides` array of `{src, alt}`. Tabs are generated from the
+array, so adding an entry is enough.
+
+## Assets
+
+Case images are referenced with a `?v=N` query key. **Bump the number whenever
+you replace an image file**, otherwise browsers serve the cached version. This
+matters because `vercel.json` sets a one hour cache on `/assets/*`.
+
+Images carry explicit `width` and `height` so the page does not reflow as they
+load. Keep those accurate when swapping a file for one of a different shape.
+
+## The inquiry form
+
+Posts to Web3Forms. Put the access key in the hidden `access_key` input in
+`index.html`. Until a real key is there, submitting falls back to opening the
+visitor's email client with the fields prefilled, so the form is never a dead
+end. The same fallback catches a network failure or a rejected POST.
+
+There is a honeypot checkbox named `botcheck`. Leave it hidden and unlabelled.
+
+## Domain
+
+Registered at Squarespace, pointed at Vercel.
+
+- apex `A` record to `216.198.79.1`
+- `www` `CNAME` to the project-specific Vercel target
+- apex 308-redirects to www
+
+## Local preview
+
+Open `index.html` in a browser. There is no server to run and no step to build.

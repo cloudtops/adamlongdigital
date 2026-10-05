@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://adamlongdigital.vercel.app/sitemap.xml
+Sitemap: https://www.adamlongdigital.com/sitemap.xml

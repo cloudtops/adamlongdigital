@@ -1,54 +1,42 @@
-document.body.classList.add('loaded');
-const hdr=document.querySelector('header');
-const dark=[...document.querySelectorAll('.output,.inquire,.marquee,footer,.process,.band')];
-addEventListener('scroll',()=>{
-  hdr.classList.toggle('solid',scrollY>40);
-  const y=hdr.getBoundingClientRect().bottom;
-  hdr.classList.toggle('dark-ctx',dark.some(el=>{const r=el.getBoundingClientRect();return r.top<y&&r.bottom>y}));
-},{passive:true});
+/* Adam Long Digital, index build
+   Three behaviours only: accordion, carousel, form. Nothing decorative. */
+(function(){
+'use strict';
 
-const tog=document.querySelector('.menu-toggle'),nv=document.getElementById('mainnav');
-tog.addEventListener('click',()=>{const o=nv.classList.toggle('open');hdr.classList.toggle('nav-open',o);tog.setAttribute('aria-expanded',o);tog.textContent=o?'Close':'Menu'});
-nv.addEventListener('click',e=>{if(e.target.tagName==='A'){nv.classList.remove('open');hdr.classList.remove('nav-open');tog.textContent='Menu'}});
-
-const io=new IntersectionObserver(es=>es.forEach(en=>{if(en.isIntersecting){en.target.classList.add('in');io.unobserve(en.target)}}),{rootMargin:'0px 0px -6% 0px',threshold:.06});
-document.querySelectorAll('.rv').forEach(el=>io.observe(el));
-
-// fit the hero headline to its container, whatever the font ends up being
-const mega=document.querySelector('.mega');
-function fitMega(){
-  if(!mega)return;
-  const wrap=mega.parentElement, cs=getComputedStyle(wrap);
-  const avail=wrap.clientWidth-parseFloat(cs.paddingLeft)-parseFloat(cs.paddingRight);
-  const BASE=100;
-  mega.style.fontSize=BASE+'px';
-  let widest=0;
-  mega.querySelectorAll('.ln i').forEach(el=>{
-    const r=document.createRange(); r.selectNodeContents(el);
-    widest=Math.max(widest,r.getBoundingClientRect().width);
+/* ───────── 1. work index accordion ───────── */
+document.querySelectorAll('.index .rowhead').forEach(function(btn){
+  btn.addEventListener('click', function(){
+    var row  = btn.closest('.row');
+    var open = row.classList.contains('is-open');
+    row.classList.toggle('is-open', !open);
+    btn.setAttribute('aria-expanded', String(!open));
   });
-  if(!widest)return;
-  const lines=mega.querySelectorAll('.ln').length||1;
-  const byWidth=(avail*0.995)/widest*BASE;
-  const byHeight=(innerHeight*0.54)/(lines*0.9);   // keep the headline inside the fold
-  const size=Math.max(34,Math.min(190,byWidth,byHeight));
-  mega.style.fontSize=size+'px';
-}
-fitMega();
-addEventListener('resize',fitMega);
-if(document.fonts&&document.fonts.ready)document.fonts.ready.then(fitMega);
-addEventListener('load',fitMega);
+});
 
-// ── instagram-style post viewer ─────────────────
-const POSTS=[
+/* ───────── 2. active section in the top bar ───────── */
+(function(){
+  var links = [].slice.call(document.querySelectorAll('.topnav a'));
+  var secs  = links.map(function(a){ return document.getElementById(a.dataset.sec); }).filter(Boolean);
+  if (!secs.length || !('IntersectionObserver' in window)) return;
+  var seen = new Map();
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){ seen.set(e.target.id, e.intersectionRatio); });
+    var best = null, top = 0;
+    seen.forEach(function(ratio, id){ if (ratio > top){ top = ratio; best = id; } });
+    links.forEach(function(a){ a.classList.toggle('on', a.dataset.sec === best); });
+  }, { rootMargin:'-46px 0px -55% 0px', threshold:[0,.1,.25,.5,1] });
+  secs.forEach(function(s){ io.observe(s); });
+})();
+
+/* ───────── 3. output viewer ───────── */
+var POSTS=[
   {
     tab:'Beyond Brokers',
     client:'Beyond Brokers Consulting',
     title:"What's a move actually worth?",
-    body:'I built these from one agent’s real production numbers. The cover asks the question, the second answers it, and the third shows the network behind it.',
+    body:'Built from one agent’s real production numbers. The cover asks the question, the second answers it, and the third shows the network behind it.',
     tag:'#recruiting #realestate #brandmarketing',
     meta:'Instagram carousel · 1080 × 1350',
-    ratio:'4/5',
     slides:[
       {src:'assets/post-bb-1.jpg?v=2',alt:'Carousel cover asking what a move is actually worth'},
       {src:'assets/post-bb-2.jpg?v=2',alt:'Slide showing sales volume nearly doubled, up 95 percent'},
@@ -62,7 +50,6 @@ const POSTS=[
     body:'One shoot turned into a printed booklet and this carousel. Cover, four feature slides with one line of copy each, and the particulars at the end.',
     tag:'#kirklandrealestate #listingmarketing',
     meta:'Instagram carousel · 1080 × 1080',
-    ratio:'1/1',
     slides:[
       {src:'assets/post-wc-1.jpg?v=2',alt:'Waterford Court carousel cover'},
       {src:'assets/post-wc-2.jpg?v=2',alt:'Waterford Court feature slide'},
@@ -79,7 +66,6 @@ const POSTS=[
     body:'Nothing is built on this property yet, so the whole thing runs on concept renderings. It ends on the agent, not a photo.',
     tag:'#luxuryrealestate #foxisland',
     meta:'Instagram carousel · 1080 × 1080',
-    ratio:'1/1',
     slides:[
       {src:'assets/post-hope-1.jpg?v=2',alt:'Hope Landing carousel cover'},
       {src:'assets/post-hope-2.jpg?v=2',alt:'Hope Landing estate slide'},
@@ -93,7 +79,6 @@ const POSTS=[
     body:'A format I can repeat for every agent they recruit. Each one gets a curve built from their own numbers, and the roster card collects them as the list grows.',
     tag:'#casestudy #datavisualization',
     meta:'Feed graphics · 1080 × 1350',
-    ratio:'4/5',
     slides:[
       {src:'assets/post-growth-1.jpg?v=2',alt:'Agent growth curve graphic'},
       {src:'assets/post-growth-2.jpg?v=2',alt:'Second agent growth curve graphic'},
@@ -102,230 +87,159 @@ const POSTS=[
   }
 ];
 
-const media=document.getElementById('postMedia'),track=document.getElementById('postTrack'),
-      dotsEl=document.getElementById('postDots'),tabsEl=document.getElementById('postTabs'),
-      countEl=document.getElementById('slideCount'),
-      prevBtn=media.querySelector('.arrow.prev'),nextBtn=media.querySelector('.arrow.next');
-let post=0,slide=0;
-
-POSTS.forEach((p,i)=>{
-  const b=document.createElement('button');
-  b.type='button';b.textContent=p.tab;
-  b.addEventListener('click',()=>loadPost(i));
-  tabsEl.appendChild(b);
-});
-
-function loadPost(i){
-  post=i;slide=0;
-  const p=POSTS[i];
-  media.style.aspectRatio=p.ratio;
-  track.innerHTML=p.slides.map(s=>`<figure><img src="${s.src}" alt="${s.alt}" draggable="false"></figure>`).join('');
-  dotsEl.innerHTML=p.slides.map((_,n)=>`<button type="button" aria-label="Slide ${n+1}"></button>`).join('');
-  [...dotsEl.children].forEach((d,n)=>d.addEventListener('click',()=>go(n)));
-  document.getElementById('postClient').textContent=p.client;
-  document.getElementById('postTitle').textContent=p.title;
-  document.getElementById('postBody').textContent=p.body;
-  document.getElementById('postTag').textContent=p.tag;
-  document.getElementById('postMeta').textContent=p.meta;
-  [...tabsEl.children].forEach((b,n)=>b.classList.toggle('on',n===i));
-  go(0,true);
-}
-function go(n,instant){
-  const p=POSTS[post];
-  slide=Math.max(0,Math.min(p.slides.length-1,n));
-  if(instant)track.classList.add('dragging');
-  track.style.transform=`translateX(${-slide*100}%)`;
-  if(instant)requestAnimationFrame(()=>track.classList.remove('dragging'));
-  [...dotsEl.children].forEach((d,i)=>d.classList.toggle('on',i===slide));
-  countEl.textContent=`${slide+1}/${p.slides.length}`;
-  prevBtn.disabled=slide===0;
-  nextBtn.disabled=slide===p.slides.length-1;
-}
-prevBtn.addEventListener('click',()=>go(slide-1));
-nextBtn.addEventListener('click',()=>go(slide+1));
-
-// swipe / drag, following the finger like the real thing
-let dragging=false,startX=0,startY=0,dx=0,locked=null;
-media.addEventListener('pointerdown',e=>{
-  if(e.target.closest('.arrow'))return;
-  dragging=true;startX=e.clientX;startY=e.clientY;dx=0;locked=null;
-  track.classList.add('dragging');
-});
-media.addEventListener('pointermove',e=>{
-  if(!dragging)return;
-  dx=e.clientX-startX;
-  const dy=e.clientY-startY;
-  if(locked===null&&(Math.abs(dx)>6||Math.abs(dy)>6))locked=Math.abs(dx)>Math.abs(dy)?'x':'y';
-  if(locked!=='x')return;
-  e.preventDefault();
-  const max=POSTS[post].slides.length-1;
-  let eased=dx;
-  if((slide===0&&dx>0)||(slide===max&&dx<0))eased=dx*0.32;   // rubber band at the ends
-  track.style.transform=`translateX(calc(${-slide*100}% + ${eased}px))`;
-});
-function endDrag(){
-  if(!dragging)return;
-  dragging=false;track.classList.remove('dragging');
-  const threshold=Math.min(90,media.clientWidth*0.16);
-  if(locked==='x'&&Math.abs(dx)>threshold)go(slide+(dx<0?1:-1));
-  else go(slide);
-}
-['pointerup','pointercancel','pointerleave'].forEach(ev=>media.addEventListener(ev,endDrag));
-
-// arrow keys when the post is in view
-addEventListener('keydown',e=>{
-  if(e.key!=='ArrowLeft'&&e.key!=='ArrowRight')return;
-  const r=document.getElementById('post').getBoundingClientRect();
-  if(r.top>innerHeight*0.75||r.bottom<innerHeight*0.25)return;
-  go(slide+(e.key==='ArrowRight'?1:-1));
-});
-
-loadPost(0);
-
-// band parallax
-const band=document.querySelector('[data-parallax]');
-let tick=false;
-addEventListener('scroll',()=>{
-  if(tick||matchMedia('(prefers-reduced-motion:reduce)').matches)return;
-  tick=true;
-  requestAnimationFrame(()=>{
-    const r=band.parentElement.getBoundingClientRect();
-    if(r.bottom>0&&r.top<innerHeight){
-      const p=(r.top+r.height/2-innerHeight/2)/innerHeight;
-      band.style.transform=`translateY(${p*-60}px)`;
-    }
-    tick=false;
-  });
-},{passive:true});
-
-// ── inquiry form ────────────────────────────────
-// Posts to Web3Forms. If the access key has not been set, or the request fails,
-// it falls back to opening a prefilled email so an inquiry is never silently lost.
-const form = document.getElementById('inquiryForm');
-if (form) {
-  const status = document.getElementById('formStatus');
-  const submitBtn = form.querySelector('button[type=submit]');
-  const MAIL = 'adamlongdigital@gmail.com';
-
-  const say = (msg, kind) => { status.textContent = msg; status.className = 'form-status ' + (kind || ''); };
-
-  const mailtoFallback = (data) => {
-    const body = [
-      `Name: ${data.name || ''}`,
-      `Email: ${data.email || ''}`,
-      `Phone: ${data.phone || ''}`,
-      `Company: ${data.company || ''}`,
-      `Needs: ${data.service || ''}`,
-      '',
-      data.details || ''
-    ].join('\n');
-    window.location.href = `mailto:${MAIL}?subject=${encodeURIComponent('Project inquiry from ' + (data.name || 'the website'))}&body=${encodeURIComponent(body)}`;
+var stage = document.getElementById('postMedia');
+if (stage){
+  var track = document.getElementById('postTrack');
+  var tabs  = document.getElementById('postTabs');
+  var out   = {
+    client: document.getElementById('postClient'),
+    title : document.getElementById('postTitle'),
+    body  : document.getElementById('postBody'),
+    tag   : document.getElementById('postTag'),
+    meta  : document.getElementById('postMeta'),
+    frame : document.getElementById('slideCount'),
+    set   : document.getElementById('setCount')
   };
+  var set = 0, slide = 0;
 
-  form.addEventListener('submit', async (e) => {
+  POSTS.forEach(function(p,i){
+    var b = document.createElement('button');
+    b.type = 'button'; b.textContent = p.tab;
+    b.addEventListener('click', function(){ load(i); });
+    tabs.appendChild(b);
+  });
+
+  function paint(){
+    track.style.transition = 'transform .3s cubic-bezier(.2,.7,.3,1)';
+    track.style.transform  = 'translate3d(' + (-slide * 100) + '%,0,0)';
+    out.frame.textContent  = (slide + 1) + ' / ' + POSTS[set].slides.length;
+    [].forEach.call(tabs.children, function(b,i){ b.classList.toggle('on', i === set); });
+  }
+
+  function load(i){
+    set = i; slide = 0;
+    var p = POSTS[i];
+    track.innerHTML = '';
+    p.slides.forEach(function(s){
+      var img = document.createElement('img');
+      img.src = s.src; img.alt = s.alt; img.draggable = false; img.loading = 'lazy';
+      track.appendChild(img);
+    });
+    out.client.textContent = p.client;
+    out.title.textContent  = p.title;
+    out.body.textContent   = p.body;
+    out.tag.textContent    = p.tag;
+    out.meta.textContent   = p.meta;
+    if (out.set) out.set.textContent = 'Set ' + (i + 1) + '/' + POSTS.length;
+    track.style.transition = 'none';
+    paint();
+  }
+
+  function go(n){
+    var max = POSTS[set].slides.length - 1;
+    slide = Math.max(0, Math.min(max, n));
+    paint();
+  }
+
+  stage.querySelector('.prev').addEventListener('click', function(){ go(slide - 1); });
+  stage.querySelector('.next').addEventListener('click', function(){ go(slide + 1); });
+
+  /* drag / swipe with axis lock and end rubber-banding */
+  var down = false, lock = null, x0 = 0, y0 = 0, dx = 0, w = 1;
+  stage.addEventListener('pointerdown', function(e){
+    if (e.target.closest('.varrow')) return;
+    down = true; lock = null; dx = 0;
+    x0 = e.clientX; y0 = e.clientY; w = stage.clientWidth || 1;
+    stage.classList.add('drag');
+  });
+  stage.addEventListener('pointermove', function(e){
+    if (!down) return;
+    var ax = e.clientX - x0, ay = e.clientY - y0;
+    if (lock === null){
+      if (Math.abs(ax) < 6 && Math.abs(ay) < 6) return;
+      lock = Math.abs(ax) > Math.abs(ay) ? 'x' : 'y';
+      if (lock === 'x' && stage.setPointerCapture) { try{ stage.setPointerCapture(e.pointerId); }catch(_){} }
+    }
+    if (lock !== 'x') return;
     e.preventDefault();
-    const data = Object.fromEntries(new FormData(form).entries());
-    if (data.botcheck) return;                       // honeypot tripped, silently drop
+    var max = POSTS[set].slides.length - 1;
+    if ((slide === 0 && ax > 0) || (slide === max && ax < 0)) ax *= .28;
+    dx = ax;
+    track.style.transition = 'none';
+    track.style.transform  = 'translate3d(calc(' + (-slide * 100) + '% + ' + dx + 'px),0,0)';
+  });
+  function release(){
+    if (!down) return;
+    down = false; stage.classList.remove('drag');
+    if (lock === 'x' && Math.abs(dx) > w * .16) go(slide + (dx < 0 ? 1 : -1));
+    else paint();
+    dx = 0; lock = null;
+  }
+  stage.addEventListener('pointerup', release);
+  stage.addEventListener('pointercancel', release);
+  stage.addEventListener('pointerleave', release);
+  stage.addEventListener('dragstart', function(e){ e.preventDefault(); });
 
-    const key = form.querySelector('[name=access_key]').value;
-    if (!key || key.startsWith('PASTE-')) {          // key not set yet
-      say('Opening your email app so nothing gets lost.', 'warn');
+  document.addEventListener('keydown', function(e){
+    if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
+    var r = stage.getBoundingClientRect();
+    if (r.bottom < 60 || r.top > window.innerHeight - 60) return;
+    go(slide + (e.key === 'ArrowRight' ? 1 : -1));
+  });
+
+  window.addEventListener('resize', function(){ w = stage.clientWidth || 1; paint(); });
+  load(0);
+}
+
+/* ───────── 4. inquiry form ───────── */
+var form = document.getElementById('inquiryForm');
+if (form){
+  var statusEl = document.getElementById('formStatus');
+  var submit   = form.querySelector('button[type=submit]');
+
+  function mailtoFallback(data){
+    var body = 'Name: ' + (data.get('name')||'') +
+      '\nEmail: ' + (data.get('email')||'') +
+      '\nPhone: ' + (data.get('phone')||'') +
+      '\nCompany: ' + (data.get('company')||'') +
+      '\nNeeds: ' + (data.get('service')||'') +
+      '\n\n' + (data.get('details')||'');
+    window.location.href = 'mailto:adamlongdigital@gmail.com?subject=' +
+      encodeURIComponent('Project inquiry') + '&body=' + encodeURIComponent(body);
+  }
+
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+    var data = new FormData(form);
+    var key  = (data.get('access_key') || '') + '';
+
+    if (!key || key.indexOf('PASTE') === 0){
+      statusEl.className = 'fstatus';
+      statusEl.textContent = 'Opening your email app instead.';
       mailtoFallback(data);
       return;
     }
 
-    submitBtn.disabled = true;
-    say('Sending…');
-    try {
-      const res = await fetch(form.action, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-        body: JSON.stringify(data)
-      });
-      const out = await res.json();
-      if (out.success) {
-        form.reset();
-        say('Got it. I’ll get back to you today.', 'ok');
-      } else {
-        throw new Error(out.message || 'submit failed');
-      }
-    } catch (err) {
-      say('That didn’t go through. Opening your email app instead.', 'warn');
-      mailtoFallback(data);
-    } finally {
-      submitBtn.disabled = false;
-    }
+    submit.disabled = true;
+    statusEl.className = 'fstatus';
+    statusEl.textContent = 'Sending…';
+
+    fetch(form.action, { method:'POST', body:data })
+      .then(function(r){ return r.json(); })
+      .then(function(j){
+        if (j && j.success){
+          form.reset();
+          statusEl.className = 'fstatus ok';
+          statusEl.textContent = 'Sent. I will get back to you, usually the same day.';
+        } else { throw new Error('rejected'); }
+      })
+      .catch(function(){
+        statusEl.className = 'fstatus';
+        statusEl.textContent = 'That did not send. Opening your email app instead.';
+        mailtoFallback(data);
+      })
+      .finally(function(){ submit.disabled = false; });
   });
 }
 
-// ── band video: only load it when it is worth the bytes ──
-const bandVideo = document.getElementById('bandVideo');
-if (bandVideo) {
-  const conn = navigator.connection || {};
-  const heavyOK = innerWidth > 700
-    && !conn.saveData
-    && !/2g|slow-2g/.test(conn.effectiveType || '')
-    && !matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if (heavyOK) {
-    const load = () => {
-      const add = (src, type) => {
-        if (!src) return;
-        const s = document.createElement('source');
-        s.src = src; s.type = type;
-        bandVideo.appendChild(s);
-      };
-      add(bandVideo.dataset.mp4, 'video/mp4');     // h264 plays everywhere, and is the smaller file here
-      add(bandVideo.dataset.webm, 'video/webm');   // fallback for builds without h264
-      bandVideo.load();
-      bandVideo.play().catch(() => {});            // poster stays if autoplay is blocked
-    };
-    if ('IntersectionObserver' in window) {
-      const vo = new IntersectionObserver((es) => {
-        es.forEach(e => {
-          if (e.isIntersecting) { load(); vo.disconnect(); }
-        });
-      }, { rootMargin: '400px' });
-      vo.observe(bandVideo);
-    } else load();
-    // pause when off screen so it is not burning cycles
-    const po = new IntersectionObserver((es) => {
-      es.forEach(e => e.isIntersecting ? bandVideo.play().catch(()=>{}) : bandVideo.pause());
-    }, { threshold: 0.05 });
-    po.observe(bandVideo);
-  }
-}
-
-// ── image reveals ──
-const imgIO = new IntersectionObserver((es) => {
-  es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); imgIO.unobserve(e.target); } });
-}, { rootMargin: '0px 0px -8% 0px', threshold: 0.1 });
-document.querySelectorAll('.rv-img').forEach(el => imgIO.observe(el));
-
-// ── stat counters ──
-const statsEl = document.getElementById('stats');
-if (statsEl && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
-  const run = (el) => {
-    const raw = el.dataset.count || el.textContent;
-    const range = raw.match(/^(\d+)-(\d+)$/);
-    const plain = raw.match(/^(\d+)(\D*)$/);
-    const target = range ? +range[2] : plain ? +plain[1] : 0;
-    if (!target || (!range && target <= 2)) return;      // "1" and "2" do not need a runway
-    const suffix = range ? '' : plain[2];
-    const dur = 1100, t0 = performance.now();
-    const draw = (v) => { el.textContent = range ? `${range[1]}-${v}` : `${v}${suffix}`; };
-    const tick = (now) => {
-      const p = Math.min(1, (now - t0) / dur);
-      draw(Math.round(target * (1 - Math.pow(1 - p, 3))));
-      if (p < 1) requestAnimationFrame(tick); else el.textContent = raw;
-    };
-    draw(0);
-    requestAnimationFrame(tick);
-  };
-
-  const sIO = new IntersectionObserver((es) => {
-    es.forEach(e => {
-      if (e.isIntersecting) { e.target.querySelectorAll('[data-count]').forEach(run); sIO.disconnect(); }
-    });
-  }, { threshold: 0.35 });
-  sIO.observe(statsEl);
-}
+})();
