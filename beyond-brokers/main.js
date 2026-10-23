@@ -4,7 +4,7 @@
   Setup: File > Share > Publish to web > pick the "Deliverables" tab > CSV > Publish,
   then paste the link below.
 */
-const SHEET_CSV_URL = "";   // paste the published CSV link for the Beyond Brokers sheet here
+const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRDx0ryhnbUQYHluX6CUaw29RNxTjXKtiviX1f3Sjpanw4C4AxqE0AEHJ1wJg-K1GI56CF4AaVN62w7/pub?gid=820891132&single=true&output=csv";   // paste the published CSV link for the Beyond Brokers sheet here
 const REFRESH_MINUTES = 5;
 
 (function () {
